@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostpath
+  labels:
+    app: hostpath
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: hostpath
+      labels:
+        app: hostpath
+    spec:
+      volumes:
+        - name: var-log
+          hostPath:
+            path: /var/log
+      containers:
+        - name: hostpath
+          volumeMounts:
+            - mountPath: /var/log
+              name: var-log
+          image: busybox
+          command:
+            - "sleep"
+            - "3600"
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: hostpath

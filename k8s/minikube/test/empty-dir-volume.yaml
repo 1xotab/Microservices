@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emptydir-volume
+  labels:
+    app: emptydir-volume
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: emptydir-volume
+      labels:
+        app: emptydir-volume
+    spec:
+      volumes:
+        - name: cache
+          emptyDir: {}
+      containers:
+        - name: one
+          image: busybox
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - "touch /foo/bar.txt && sleep 3600"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /foo
+              name: cache
+        - name: two
+          image: busybox
+          command:
+            - "sleep"
+            - "3600"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /foo
+              name: cache
+  selector:
+    matchLabels:
+      app: emptydir-volume
